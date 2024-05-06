@@ -9,7 +9,9 @@ import {
 } from './shared/constants';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    // logger,
+  });
   // Enable basic Helmet security headers
   app.use(helmet());
 
@@ -19,6 +21,7 @@ async function bootstrap() {
     max: RATE_LIMIT_MAX_REQUESTS, // limit each IP to 100 requests per windowMs
   });
   app.use(limiter);
-  await app.listen(PORT);
+  const port = process.env.PORT || PORT;
+  await app.listen(port);
 }
 bootstrap();
