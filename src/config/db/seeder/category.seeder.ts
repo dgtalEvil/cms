@@ -14,12 +14,31 @@ export class CategorySeeder implements SeederService {
   ) {}
 
   async seed() {
-    this.logger.info('Seeding Categories');
-    const category = this.factory.create();
     try {
-      await this.repository.save(category);
-      this.logger.info('Categories Seeded');
-      return;
+      this.logger.info('Seeding Categories');
+
+      // Fetch existing category names from the database
+      const existingCategories = (await this.repository.find()).map(
+        (category) => category.name,
+      );
+
+      // Create new categories
+      const newCategories: Category[] = this.factory.create();
+
+      // Filter out categories that already exist in the database
+      const categoriesToSave = newCategories.filter(
+        (category) => !existingCategories.includes(category.name),
+      );
+
+      // Perform bulk insert for new categories
+      if (categoriesToSave.length > 0) {
+        await this.repository.insert(categoriesToSave);
+        categoriesToSave.forEach((category) => {
+          this.logger.info(`Category ${category.name} Seeded`);
+        });
+      } else {
+        this.logger.info('No new categories to seed');
+      }
     } catch (error) {
       this.logger.error(`Error Seeding Category Data: ${error}`);
     }

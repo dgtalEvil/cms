@@ -3,14 +3,36 @@ import { Category } from 'src/categories/entities/category.entity';
 import * as faker from 'faker';
 @Injectable()
 export class CategoryFactory {
-  create(): Category {
-    return this.createDefault();
+  create(): Category[] {
+    const categories: Category[] = [
+      this.createDefaultCategory(),
+      ...this.createOtherCategories(),
+    ];
+    return categories;
   }
 
-  createDefault(): Category {
+  _createCategory(name: string): Category {
     const category = new Category();
     category.id = faker.datatype.uuid();
-    category.name = 'Default';
+    category.name = name;
     return category;
+  }
+
+  createDefaultCategory(): Category {
+    return this._createCategory('Default');
+  }
+
+  createOtherCategories(): Category[] {
+    const names: string[] = [
+      'Technology',
+      'Science',
+      'Travel',
+      'Fashion',
+      'Food',
+    ];
+    const categories: Category[] = names.map((name) =>
+      this._createCategory(name),
+    );
+    return categories;
   }
 }
