@@ -1,8 +1,8 @@
 import { Entity, Column } from 'typeorm';
 import { IsString, Length } from 'class-validator';
-import { BaseEntity } from 'src/shared/types/base.entity';
+import { BaseEntity } from '../../shared/types/base.entity';
 
-@Entity()
+@Entity({ name: 'category' })
 export class Category extends BaseEntity {
   @Column({ unique: true, nullable: false })
   @IsString()

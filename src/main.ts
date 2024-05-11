@@ -22,6 +22,8 @@ async function bootstrap() {
   });
   app.use(limiter);
   const port = process.env.PORT || PORT;
-  await app.listen(port);
+  await app.listen(port, () => {
+    console.log('🚀 ~ Nest application successfully started in port :', port);
+  });
 }
 bootstrap();

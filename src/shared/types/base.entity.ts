@@ -10,7 +10,7 @@ import { Transform } from 'class-transformer';
 export class BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @IsString()
-  id: number;
+  id: string;
 
   @CreateDateColumn()
   @IsDate()
