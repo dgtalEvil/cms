@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriesModule } from './categories/categories.module';
 import ormconfig from './config/db/ormconfig';
+import { SeederModule } from './config/db/seeder/seeder.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(ormconfig), CategoriesModule],
+  imports: [TypeOrmModule.forRoot(ormconfig), CategoriesModule, SeederModule],
   controllers: [AppController],
   providers: [AppService],
 })
