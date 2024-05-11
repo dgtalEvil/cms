@@ -1,5 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
+import { Category } from 'src/categories/entities/category.entity';
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -10,7 +11,7 @@ const ormconfig: TypeOrmModuleOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  entities: [],
+  entities: [Category],
   synchronize: true,
   logging: true,
   logger: 'advanced-console',
