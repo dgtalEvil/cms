@@ -1,28 +1,76 @@
+import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Category } from './entities/category.entity';
+import { LoggerService } from 'src/shared/logger/logger.service';
 
 @Injectable()
 export class CategoriesService {
-  create(createCategoryDto: CreateCategoryDto) {
-    const payload = createCategoryDto;
-    return payload;
+  constructor(
+    @InjectRepository(Category)
+    private readonly repository: Repository<Category>,
+    private readonly logger: LoggerService,
+  ) {}
+
+  async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
+    try {
+      const newCategory = this.repository.create(createCategoryDto);
+
+      // Save the new category to the database
+      return await this.repository.save(newCategory);
+    } catch (error) {
+      this.logger.error(`Error creating category: ${error.message}`);
+    }
   }
 
-  findAll() {
-    return `This action returns all categories`;
+  async findAll(): Promise<Category[]> {
+    try {
+      return await this.repository.find();
+    } catch (error) {
+      this.logger.error(`Error retrieving all categories: ${error.message}`);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: string): Promise<Category> {
+    try {
+      const response = await this.repository.findOne({
+        where: {
+          id,
+        },
+      });
+      if (!response) {
+        this.logger.error(`Category with ID ${id} not found`);
+      }
+      return response;
+    } catch (error) {
+      this.logger.error(`Error retrieving Category: ${error.message}`);
+    }
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    const payload = updateCategoryDto;
-    return payload;
+  async update(
+    id: string,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<Category> {
+    try {
+      let category = await this.findOne(id);
+
+      // Update the category properties based on the DTO
+      if (updateCategoryDto.name !== category.name) {
+        category.name = updateCategoryDto.name;
+        category = await this.repository.save(category);
+      }
+      return category;
+    } catch (error) {
+      this.logger.error(`Error updating Category: ${error.message}`);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: string) {
+    const category = await this.findOne(id);
+
+    category.deletedAt = new Date();
+    await this.repository.softRemove(category);
   }
 }
