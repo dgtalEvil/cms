@@ -10,6 +10,7 @@ import {
 import { SeederService } from './config/db/seeder/seeder.interface';
 import { SeederModule } from './config/db/seeder/seeder.module';
 import { CategorySeeder } from './config/db/seeder/category.seeder';
+import { PostSeeder } from './config/db/seeder/post.seeder';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,9 +27,10 @@ async function bootstrap() {
   // DB Seeding
   const seederModule = app.select(SeederModule);
   const categorySeeder: SeederService = seederModule.get(CategorySeeder);
+  const postSeeder: SeederService = seederModule.get(PostSeeder);
 
   // add the seeders in below []
-  const seeders: SeederService[] = [categorySeeder];
+  const seeders: SeederService[] = [categorySeeder, postSeeder];
 
   for (const seeder of seeders) {
     await seeder.seed();

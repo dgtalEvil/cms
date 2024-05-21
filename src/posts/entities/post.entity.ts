@@ -1,6 +1,7 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, ManyToOne } from 'typeorm';
 import { IsString, Length } from 'class-validator';
 import { BaseEntity } from '../../shared/types/base.entity';
+import { Category } from 'src/categories/entities/category.entity';
 
 @Entity({ name: 'post' })
 export class Post extends BaseEntity {
@@ -13,4 +14,7 @@ export class Post extends BaseEntity {
   @IsString()
   @Length(1, 255)
   content: string;
+
+  @ManyToOne(() => Category, { nullable: false })
+  category: Category;
 }
